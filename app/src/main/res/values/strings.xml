@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">java note app</string>
+    <string name="search_hint">Search here…</string>
+
+    <string name="filter_icon_des">to filter note list</string>
+    <string name="fab_add">to add notes</string>
+    <string name="note_list_page_title">My Notes</string>
+</resources>

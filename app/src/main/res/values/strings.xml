@@ -5,4 +5,11 @@
     <string name="filter_icon_des">to filter note list</string>
     <string name="fab_add">to add notes</string>
     <string name="note_list_page_title">My Notes</string>
+
+    <string name="note_text_model_title">Note Title</string>
+    <string name="note_text_model_date">Jan 20th 2020 03:04 PM</string>
+    <string name="note_text_model_note">Lorem Ipsum has been the industry\'s standard text ever
+since the 1500s, when an unknown printer of type
+and scrambled it to also make a type specimen. It has a
+survived not only five centuries, but also in the leap into…</string>
 </resources>

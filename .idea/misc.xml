@@ -3,6 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/hyebreed/AndroidStudioProjects/javanoteapp/app/src/main/res/drawable/check_box_cheched_bg.xml" value="0.2165" />
+        <entry key="..\:/Users/hyebreed/AndroidStudioProjects/javanoteapp/app/src/main/res/drawable/check_box_selector.xml" value="0.1985" />
+        <entry key="..\:/Users/hyebreed/AndroidStudioProjects/javanoteapp/app/src/main/res/drawable/check_box_unchecked_bg.xml" value="0.1985" />
         <entry key="..\:/Users/hyebreed/AndroidStudioProjects/javanoteapp/app/src/main/res/drawable/ic_launcher_background.xml" value="0.139" />
         <entry key="..\:/Users/hyebreed/AndroidStudioProjects/javanoteapp/app/src/main/res/drawable/ic_search.xml" value="0.18" />
         <entry key="..\:/Users/hyebreed/AndroidStudioProjects/javanoteapp/app/src/main/res/drawable/note_model_bg.xml" value="0.1855" />
@@ -12,7 +15,7 @@
         <entry key="..\:/Users/hyebreed/AndroidStudioProjects/javanoteapp/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/Users/hyebreed/AndroidStudioProjects/javanoteapp/app/src/main/res/layouts/activities/layout/jklj.xml" value="0.1" />
         <entry key="..\:/Users/hyebreed/AndroidStudioProjects/javanoteapp/app/src/main/res/layouts/activities/layout/note_list_activity.xml" value="0.25" />
-        <entry key="..\:/Users/hyebreed/AndroidStudioProjects/javanoteapp/app/src/main/res/layouts/content/layout/note_list_model.xml" value="0.25" />
+        <entry key="..\:/Users/hyebreed/AndroidStudioProjects/javanoteapp/app/src/main/res/layouts/content/layout/note_list_model.xml" value="0.22" />
       </map>
     </option>
   </component>
@@ -21,5 +24,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.22" />
+      </ProjectState>
+    </option>
   </component>
 </project>

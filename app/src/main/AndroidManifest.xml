@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JavaNoteApp">
         <activity
-            android:name=".notelistpage.NoteListActivity"
+            android:name=".view.notelistpage.NoteListActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

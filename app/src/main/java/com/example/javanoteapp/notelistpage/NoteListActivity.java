@@ -1,8 +1,10 @@
-package com.example.javanoteapp;
+package com.example.javanoteapp.notelistpage;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.javanoteapp.R;
 
 public class NoteListActivity extends AppCompatActivity {
 

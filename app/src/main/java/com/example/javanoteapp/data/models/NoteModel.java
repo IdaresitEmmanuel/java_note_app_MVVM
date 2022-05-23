@@ -1,14 +1,33 @@
 package com.example.javanoteapp.data.models;
 
+import java.util.Calendar;
+
 public class NoteModel {
+    int id;
     String title, body;
     String date;
     boolean isSelected = false;
 
-    public NoteModel(String title, String body, String date){
+    public NoteModel(int id, String title, String date, String body){
+        this.id = id;
         this.title = title;
-        this.body = body;
         this.date = date;
+        this.body = body;
+    }
+
+    public static NoteModel getEmptyNote() {
+        return new NoteModel(-1,
+                "",
+                Calendar.getInstance().getTime().toString(),
+                "");
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {

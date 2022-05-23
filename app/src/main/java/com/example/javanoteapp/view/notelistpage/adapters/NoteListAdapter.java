@@ -17,15 +17,8 @@ import java.util.ArrayList;
 public class NoteListAdapter
         extends RecyclerView.Adapter<NoteListAdapter.ViewHolder> {
     ArrayList<NoteModel> noteList = new ArrayList<NoteModel>();
-    public NoteListAdapter(){
-        NoteModel note = new NoteModel("Note Title", "Lorem Ipsum has been the industry\\'s standard text ever\n" +
-                "since the 1500s, when an unknown printer of type\n" +
-                "and scrambled it to also make a type specimen. It has a\n" +
-                "survived not only five centuries, but also in the leap into…",
-                "Jan 20th 2020 03:04 PM");
-        for(int i = 0; i < 10; i++){
-            noteList.add(note);
-        }
+    public NoteListAdapter(ArrayList<NoteModel> noteList){
+        this.noteList = noteList;
     }
 
 

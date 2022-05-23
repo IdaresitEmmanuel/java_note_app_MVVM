@@ -1,0 +1,4 @@
+<resources>
+    <string name="note_body">Write your note here</string>
+    <string name="editNotePageTitle">Note</string>
+</resources>

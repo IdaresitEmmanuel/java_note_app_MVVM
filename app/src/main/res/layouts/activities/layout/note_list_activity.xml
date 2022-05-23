@@ -27,7 +27,7 @@
             android:orientation="horizontal">
 
             <androidx.appcompat.widget.AppCompatEditText
-                android:drawableStart="@drawable/search"
+                android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -35,7 +35,7 @@
                 android:padding="@dimen/padding_default"
                 android:textColorHint="@color/icon_color"
                 android:hint="@string/search_hint"
-                android:background="@drawable/search_bg" />
+                android:background="@drawable/bg_search" />
 
             <ImageButton
                 android:id="@id/search_button"
@@ -46,7 +46,7 @@
                 android:minWidth="48dp"
                 android:src="@drawable/ic_filter_list"
                 android:padding="@dimen/padding_default"
-                android:background="@drawable/rounded_rect_button_bg"
+                android:background="@drawable/bg_rounded_rect_button"
                 android:contentDescription="@string/filter_icon_des" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -63,6 +63,7 @@
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"

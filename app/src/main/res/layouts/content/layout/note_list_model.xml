@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:checked="false"
         android:visibility="gone"
-        android:button="@drawable/check_box_selector"
+        android:button="@drawable/selector_check_box"
         />
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_toEndOf="@+id/note_checkbox"
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:orientation="vertical"
-        android:background="@drawable/note_model_bg"
+        android:background="@drawable/bg_note_model"
         >
         <TextView
             android:id="@+id/note_title"

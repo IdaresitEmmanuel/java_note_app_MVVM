@@ -54,8 +54,8 @@ public class NoteModel {
         this.date = date;
     }
 
-    public String getIsSelected() {
-        return title;
+    public boolean getIsSelected() {
+        return isSelected;
     }
 
     public void setIsSelected(boolean isSelected) {

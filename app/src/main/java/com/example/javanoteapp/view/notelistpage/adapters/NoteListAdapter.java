@@ -16,22 +16,40 @@ import java.util.ArrayList;
 
 public class NoteListAdapter
         extends RecyclerView.Adapter<NoteListAdapter.ViewHolder> {
-    ArrayList<NoteModel> noteList = new ArrayList<NoteModel>();
-    public NoteListAdapter(ArrayList<NoteModel> noteList){
+    public ArrayList<NoteModel> noteList;
+    ItemClickListener clickListener;
+    ItemLongClickListener longClickListener;
+    private boolean isActionMode = false;
+    public NoteListAdapter(boolean isActionMode, ArrayList<NoteModel> noteList, ItemClickListener clickListener, ItemLongClickListener longClickListener){
+        this.isActionMode = isActionMode;
         this.noteList = noteList;
+        this.clickListener = clickListener;
+        this.longClickListener = longClickListener;
     }
 
-
-
     public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView noteTitle, noteDate, noteBody;
-        private CheckBox checkBox;
+        private final TextView noteTitle;
+        private TextView noteDate;
+        private TextView noteBody;
+        private final CheckBox checkBox;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             noteTitle = itemView.findViewById(R.id.note_title);
             noteDate = itemView.findViewById(R.id.note_date);
             noteBody = itemView.findViewById(R.id.note_body);
             checkBox = itemView.findViewById(R.id.note_checkbox);
+        }
+    }
+
+    public void selectNote(int position){
+        NoteModel model = noteList.get(position);
+        model.setIsSelected(!model.getIsSelected());
+        notifyItemChanged(position);
+    }
+
+    public void unselectAll(){
+        for(int i = 0; i < noteList.size(); i++){
+            noteList.get(i).setIsSelected(false);
         }
     }
 
@@ -49,6 +67,21 @@ public class NoteListAdapter
         holder.noteTitle.setText(model.getTitle());
         holder.noteDate.setText(model.getDate());
         holder.noteBody.setText(model.getBody());
+        if(isActionMode){
+            holder.checkBox.setVisibility(View.VISIBLE);
+        }else{
+            holder.checkBox.setVisibility(View.GONE);
+        }
+        holder.checkBox.setChecked(model.getIsSelected());
+        holder.checkBox.setOnClickListener(view -> selectNote(position));
+        holder.itemView.setOnClickListener(view -> {
+            clickListener.itemClick(model, position);
+        });
+
+        holder.itemView.setOnLongClickListener(view -> {
+            longClickListener.onItemLongClick(view, model, position);
+            return true;
+        });
     }
 
     @Override

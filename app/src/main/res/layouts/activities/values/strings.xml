@@ -1,4 +1,7 @@
 <resources>
     <string name="note_body">Write your note here</string>
     <string name="editNotePageTitle">Note</string>
+    <string name="delete">delete</string>
+    <string name="selected">2 items selected</string>
+    <string name="delete_button">delete_button</string>
 </resources>

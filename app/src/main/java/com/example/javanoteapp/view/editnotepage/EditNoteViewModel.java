@@ -9,26 +9,67 @@ import com.example.javanoteapp.data.models.NoteModel;
 import com.example.javanoteapp.data.repository.DBProvider;
 
 public class EditNoteViewModel extends ViewModel {
-    NoteModel note = NoteModel.getEmptyNote();
+    private NoteModel note = NoteModel.getEmptyNote();
 
     public EditNoteViewModel(){
         Log.i("EditNoteViewModel", "ViewModel has been created");
     }
 
-    void setNote(NoteModel model){
+    public void setNote(NoteModel model){
         note = model;
     }
 
-    void setTitle(String title){
+//    public NoteModel getNote(){
+//        return note;
+//    }
+
+    public int getId(){
+        return note.getId();
+    }
+
+    public String getDate(){
+        return note.getDate();
+    }
+
+    public void setTitle(String title){
         note.setTitle(title);
     }
 
-    void setNoteBody(String body){
+    public String getTitle(){
+        return note.getTitle();
+    }
+
+    public void setNoteBody(String body){
         note.setBody(body);
     }
 
-    boolean saveNote(){
-        return DBProvider.getInstance().addNote(note);
+    public String getNoteBody(){
+        return note.getBody();
+    }
+
+    String saveNote(){
+        String tempString = "";
+        if(note.getId() > -1){
+            final boolean result = DBProvider.getInstance().updateNote(note);
+            if(result){
+                tempString = "note updated!";
+            }else{
+                tempString = "something went wrong!";
+            }
+        }else{
+            final boolean result = DBProvider.getInstance().addNote(note);
+            setNewId();
+            if(result){
+                tempString = "note successfully added to database!";
+            }else{
+                tempString = "something went wrong!, try again";
+            }
+        }
+        return tempString;
+    }
+
+    public void setNewId(){
+        note.setId(DBProvider.getInstance().getLastNoteId());
     }
 
     boolean deleteFromDatabase(){

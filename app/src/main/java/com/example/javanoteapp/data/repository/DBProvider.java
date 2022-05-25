@@ -1,13 +1,10 @@
 package com.example.javanoteapp.data.repository;
 
-import android.app.Application;
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-
-import androidx.annotation.Nullable;
+import android.util.Log;
 
 import com.example.javanoteapp.MyApplication;
 import com.example.javanoteapp.data.models.NoteModel;
@@ -17,7 +14,7 @@ import java.util.List;
 
 public class DBProvider extends SQLiteOpenHelper {
 
-    private static final int VERSION = 1;
+    private static final int VERSION = 3;
     private static final String DB_NAME = "noteDatabase";
     private static final String NOTE_TABLE = "noteTable";
     private static final String NOTE_ID = "id";
@@ -25,9 +22,7 @@ public class DBProvider extends SQLiteOpenHelper {
     private static final String NOTE_DATE = "noteDate";
     private static final String NOTE_BODY = "noteBody";
 
-    private static final String CREATE_NOTE_TABLE = "CREATE TABLE " + NOTE_TABLE +"(" + NOTE_ID
-            + " INTEGER PRIMARY KEY AUTOINCREMENT, " + NOTE_TITLE + " TEXT, "
-            + NOTE_DATE + " TEXT, " + NOTE_BODY + " TEXT)";
+    private static final String CREATE_NOTE_TABLE = String.format("CREATE TABLE %s(%s INTEGER PRIMARY KEY AUTOINCREMENT, %s TEXT, %s TEXT, %s TEXT)", NOTE_TABLE, NOTE_ID, NOTE_TITLE, NOTE_DATE, NOTE_BODY);
 
     private SQLiteDatabase db;
 
@@ -55,7 +50,7 @@ public class DBProvider extends SQLiteOpenHelper {
         try{
             sqLiteDatabase.execSQL(CREATE_NOTE_TABLE);
         }catch (android.database.SQLException exception){
-            System.out.println(exception);
+            Log.e("error getting notes", exception.toString());
         }
     }
 
@@ -65,7 +60,7 @@ public class DBProvider extends SQLiteOpenHelper {
         try{
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + NOTE_TABLE);
         }catch (android.database.SQLException exception){
-            System.out.println(exception);
+            Log.e("error getting notes", exception.toString());
         }
         //create new table
         onCreate(sqLiteDatabase);
@@ -89,8 +84,9 @@ public class DBProvider extends SQLiteOpenHelper {
             }
 
         }catch (Exception e){
-            System.out.println(e);
+            Log.e("error getting notes", e.toString());
         }finally {
+            assert cur != null;
             cur.close();
             db.endTransaction();
             closeDatabase();
@@ -98,9 +94,9 @@ public class DBProvider extends SQLiteOpenHelper {
         return noteModel;
     }
 
-    public List<NoteModel> getNotes(){
+    public ArrayList<NoteModel> getNotes(){
         openDatabase();
-        List<NoteModel> noteModelList = new ArrayList<>();
+        ArrayList<NoteModel> noteModelList = new ArrayList<>();
         Cursor cur = null;
         db.beginTransaction();
         try{
@@ -112,16 +108,17 @@ public class DBProvider extends SQLiteOpenHelper {
                         String title = cur.getString(cur.getColumnIndexOrThrow(NOTE_TITLE));
                         String date = cur.getString(cur.getColumnIndexOrThrow(NOTE_DATE));
                         String body = cur.getString(cur.getColumnIndexOrThrow(NOTE_BODY));
-                        noteModelList.add(new NoteModel(id,title, body, date));
+                        noteModelList.add(new NoteModel(id,title, date, body));
                     }while(cur.moveToNext());
                 }
             }
         }catch (Exception e){
-            System.out.println(e);
+            Log.e("error getting notes", e.toString());
         }finally{
             db.endTransaction();
-            cur.close();
             closeDatabase();
+            assert cur != null;
+            cur.close();
         }
         return noteModelList;
     }
@@ -135,7 +132,7 @@ public class DBProvider extends SQLiteOpenHelper {
 
         long result = db.insert(NOTE_TABLE, null, cv);
 
-        if(result > -1) { return true; }else{ return false;}
+        return result > -1;
     }
 
     public int getLastNoteId(){
@@ -151,33 +148,37 @@ public class DBProvider extends SQLiteOpenHelper {
                 }
             }
         }catch (Exception e){
-            System.out.println(e);
+            Log.e("error getting notes", e.toString());
         }finally{
             db.endTransaction();
+            assert cur != null;
             cur.close();
             closeDatabase();
         }
         return id;
     }
 
-    public boolean updateNote(int id){
+    public boolean updateNote(NoteModel noteModel){
         openDatabase();
-        int result = db.update(NOTE_TABLE, null, NOTE_ID +"=?", new String[]{String.valueOf(id)});
+        ContentValues cv = new ContentValues();
+        cv.put(NOTE_TITLE, noteModel.getTitle());
+        cv.put(NOTE_BODY, noteModel.getBody());
+        int result = db.update(NOTE_TABLE, cv, NOTE_ID +"=?", new String[]{String.valueOf(noteModel.getId())});
         closeDatabase();
-        if(result > -1) { return true; }else{ return false;}
+        return result > -1;
     }
 
     public boolean deleteNote(int id){
         openDatabase();
         int result = db.delete(NOTE_TABLE,NOTE_ID +"=?", new String[]{String.valueOf(id)});
         closeDatabase();
-        if(result > -1) { return true; }else{ return false;}
+        return result > -1;
     }
 
     public boolean deleteAllNotes(){
         openDatabase();
         int result = db.delete(NOTE_TABLE, null, null);
         closeDatabase();
-        if(result > -1) { return true; }else{ return false;}
+        return result > -1;
     }
 }

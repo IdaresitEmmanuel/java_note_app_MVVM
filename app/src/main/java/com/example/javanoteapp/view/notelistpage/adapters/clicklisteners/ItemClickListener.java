@@ -1,6 +1,4 @@
-package com.example.javanoteapp.view.notelistpage.adapters;
-
-import android.view.View;
+package com.example.javanoteapp.view.notelistpage.adapters.clicklisteners;
 
 import com.example.javanoteapp.data.models.NoteModel;
 

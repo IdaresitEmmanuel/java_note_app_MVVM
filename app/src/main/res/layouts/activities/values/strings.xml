@@ -4,4 +4,9 @@
     <string name="delete">delete</string>
     <string name="selected">2 items selected</string>
     <string name="delete_button">delete_button</string>
+    <string name="filter">Filter</string>
+    <string name="none">None</string>
+    <string name="alphabetical">Alphabetical</string>
+    <string name="by_date">By Date</string>
+    <string name="are_you_sure_you_want_to_delete_2_items">Are you sure you want to delete 2 items?</string>
 </resources>

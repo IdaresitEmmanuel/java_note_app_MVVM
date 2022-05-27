@@ -87,9 +87,9 @@ public class EditNoteActivity extends AppCompatActivity implements LifecycleOwne
                     options_btn.setVisibility(View.GONE);
                     save_image_btn.setVisibility(View.VISIBLE);
                 }
+
             }
         });
-
         bodyTet.setOnFocusChangeListener((view, b) -> {
             if(b){
                 options_btn.setVisibility(View.GONE);

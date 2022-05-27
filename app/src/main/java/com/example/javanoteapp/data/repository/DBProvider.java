@@ -7,10 +7,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.example.javanoteapp.MyApplication;
+import com.example.javanoteapp.constants.NoteFilter;
 import com.example.javanoteapp.data.models.NoteModel;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 
 public class DBProvider extends SQLiteOpenHelper {
 
@@ -66,41 +67,48 @@ public class DBProvider extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public NoteModel getNote(int noteId){
-        openDatabase();
-        NoteModel noteModel = null;
-        Cursor cur = null;
-        db.beginTransaction();
-        try{
-            cur = db.query(NOTE_TABLE, null, "where " + NOTE_ID + " = ?", new String[]{""+noteId+""}, null, null, null);
-            if(cur != null){
-                if(cur.moveToFirst()){
-                        int id = cur.getInt(cur.getColumnIndexOrThrow(NOTE_ID));
-                        String title = cur.getString(cur.getColumnIndexOrThrow(NOTE_TITLE));
-                        String date = cur.getString(cur.getColumnIndexOrThrow(NOTE_DATE));
-                        String body = cur.getString(cur.getColumnIndexOrThrow(NOTE_BODY));
-                        noteModel = new NoteModel(id,title, body, date);
-                }
-            }
-
-        }catch (Exception e){
-            Log.e("error getting notes", e.toString());
-        }finally {
-            assert cur != null;
-            cur.close();
-            db.endTransaction();
-            closeDatabase();
-        }
-        return noteModel;
-    }
+//    public NoteModel getNote(int noteId){
+//        openDatabase();
+//        NoteModel noteModel = null;
+//        Cursor cur = null;
+//        db.beginTransaction();
+//        try{
+//            cur = db.query(NOTE_TABLE, null, "where " + NOTE_ID + " = ?", new String[]{""+noteId+""}, null, null, null);
+//            if(cur != null){
+//                if(cur.moveToFirst()){
+//                        int id = cur.getInt(cur.getColumnIndexOrThrow(NOTE_ID));
+//                        String title = cur.getString(cur.getColumnIndexOrThrow(NOTE_TITLE));
+//                        String date = cur.getString(cur.getColumnIndexOrThrow(NOTE_DATE));
+//                        String body = cur.getString(cur.getColumnIndexOrThrow(NOTE_BODY));
+//                        noteModel = new NoteModel(id,title, body, date);
+//                }
+//            }
+//
+//        }catch (Exception e){
+//            Log.e("error getting notes", e.toString());
+//        }finally {
+//            assert cur != null;
+//            cur.close();
+//            db.endTransaction();
+//            closeDatabase();
+//        }
+//        return noteModel;
+//    }
 
     public ArrayList<NoteModel> getNotes(){
         openDatabase();
         ArrayList<NoteModel> noteModelList = new ArrayList<>();
+        NoteFilter filter = AppPreferences.getInstance().getFilter();
+        String orderString = "";
         Cursor cur = null;
         db.beginTransaction();
+        if(filter.equals(NoteFilter.byDate)){
+            orderString = NOTE_DATE + " DESC";
+        }else{
+            orderString = null;
+        }
         try{
-            cur = db.query(NOTE_TABLE, null, null, null, null, null, null);
+            cur = db.query(NOTE_TABLE, null, null, null, null, null, orderString);
             if(cur != null){
                 if(cur.moveToFirst()){
                     do{
@@ -119,6 +127,11 @@ public class DBProvider extends SQLiteOpenHelper {
             closeDatabase();
             assert cur != null;
             cur.close();
+        }
+        if(filter.equals(NoteFilter.alphabetical)){
+            Collections.sort(noteModelList, (noteModel, t1) -> {
+                return noteModel.getTitle().toLowerCase().compareTo(t1.getTitle().toLowerCase());
+            });
         }
         return noteModelList;
     }
@@ -175,10 +188,10 @@ public class DBProvider extends SQLiteOpenHelper {
         return result > -1;
     }
 
-    public boolean deleteAllNotes(){
-        openDatabase();
-        int result = db.delete(NOTE_TABLE, null, null);
-        closeDatabase();
-        return result > -1;
-    }
+//    public boolean deleteAllNotes(){
+//        openDatabase();
+//        int result = db.delete(NOTE_TABLE, null, null);
+//        closeDatabase();
+//        return result > -1;
+//    }
 }

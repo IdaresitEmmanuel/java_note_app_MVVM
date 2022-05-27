@@ -1,7 +1,5 @@
 package com.example.javanoteapp.view.notelistpage;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,23 +14,29 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.javanoteapp.R;
 import com.example.javanoteapp.data.models.NoteModel;
 import com.example.javanoteapp.view.editnotepage.EditNoteActivity;
-import com.example.javanoteapp.view.notelistpage.adapters.ItemClickListener;
-import com.example.javanoteapp.view.notelistpage.adapters.ItemLongClickListener;
+import com.example.javanoteapp.view.notelistpage.adapters.clicklisteners.ItemClickListener;
+import com.example.javanoteapp.view.notelistpage.adapters.clicklisteners.ItemLongClickListener;
 import com.example.javanoteapp.view.notelistpage.adapters.NoteListAdapter;
+import com.example.javanoteapp.view.notelistpage.dialogs.DeleteDialog;
+import com.example.javanoteapp.view.notelistpage.dialogs.FilterDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class NoteListActivity extends AppCompatActivity {
+import java.util.Objects;
+
+public class NoteListActivity extends AppCompatActivity implements FilterDialog.FilterDialogListener, DeleteDialog.DeleteDialogListener {
     NoteListViewModel viewModel;
     RecyclerView noteListRV;
     FloatingActionButton fab;
     NoteListAdapter adapter;
     LinearLayoutCompat searchBar, actionBar;
-    ImageButton close_action_bar_ibn, delete_btn;
+    ImageButton close_action_bar_ibn, delete_btn, filter_btn;
+    TextView selected_count_tv;
 
     @Override
     public void onBackPressed() {
@@ -46,8 +50,7 @@ public class NoteListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.note_list_activity);
-        Toast.makeText(this, "has been called onCreate()", Toast.LENGTH_SHORT).show();
+        setContentView(R.layout.activity_note_list);
         viewModel = new ViewModelProvider(this).get(NoteListViewModel.class);
 
         setUpUI();
@@ -75,35 +78,44 @@ public class NoteListActivity extends AppCompatActivity {
     }
 
     public void setUpRecyclerAdapter(){
-        adapter = new NoteListAdapter(viewModel.isActionMode, viewModel.noteList, new ItemClickListener() {
-            @Override
-            public void itemClick(NoteModel model, int position) {
-                if(viewModel.isActionMode){
-                    adapter.selectNote(position);
-                    if(viewModel.getSelectedList().isEmpty()){
-                        setActionMode(false);
-                    }
+        adapter = new NoteListAdapter(viewModel.isActionMode,
+                viewModel.noteList,
+                new ItemClickListener() {
+                    @Override
+                    public void itemClick(NoteModel model, int position) {
+                        if(viewModel.isActionMode){
+                            adapter.selectNote(position);
+                            int count = viewModel.getSelectedList().size();
+                            String countText = "";
+                            if(count == 1){
+                                countText = count + " item selected";
+                            }else{
+                                countText = count + " items selected";
+                            }
+                            selected_count_tv.setText(countText);
+                            if(viewModel.getSelectedList().isEmpty()){
+                                setActionMode(false);
+                            }
 
-                }else{
-                    Intent intent = new Intent(NoteListActivity.this, EditNoteActivity.class);
-                    intent.putExtra("id", model.getId());
-                    intent.putExtra("title", model.getTitle());
-                    intent.putExtra("date", model.getDate());
-                    intent.putExtra("body", model.getBody());
-                    someActivityResultLauncher.launch(intent);
-                }
-            }
-        }, new ItemLongClickListener(){
-            @Override
-            public void onItemLongClick(View v, NoteModel model, int position) {
-                if(!viewModel.isActionMode){
-                    setActionMode(true);
-                    adapter.selectNote(position);
-                }else{
-                    v.callOnClick();
-                }
-            }
-        });
+                        }else{
+                            Intent intent = new Intent(NoteListActivity.this, EditNoteActivity.class);
+                            intent.putExtra("id", model.getId());
+                            intent.putExtra("title", model.getTitle());
+                            intent.putExtra("date", model.getDate());
+                            intent.putExtra("body", model.getBody());
+                            someActivityResultLauncher.launch(intent);
+                        }
+                    }
+                },
+                new ItemLongClickListener(){
+                    @Override
+                    public void onItemLongClick(View v, NoteModel model, int position) {
+                        if(!viewModel.isActionMode){
+                            setActionMode(true);
+                            v.callOnClick();
+                        }
+                    }
+                });
         noteListRV.setAdapter(adapter);
         if(!viewModel.isActionMode){
             adapter.unselectAll();
@@ -115,6 +127,8 @@ public class NoteListActivity extends AppCompatActivity {
         close_action_bar_ibn.setOnClickListener(view -> setActionMode(false));
         searchBar = findViewById(R.id.search_bar);
         actionBar = findViewById(R.id.action_bar);
+
+        selected_count_tv = findViewById(R.id.selected_count_tv);
 
         noteListRV = findViewById(R.id.noteListRV);
         noteListRV.setLayoutManager(new LinearLayoutManager(this));
@@ -128,39 +142,50 @@ public class NoteListActivity extends AppCompatActivity {
         });
         setUpActionMode();
 
+        filter_btn = findViewById(R.id.filter_button);
+        filter_btn.setOnClickListener(view -> {
+            FilterDialog dialog = new FilterDialog();
+            dialog.show(getSupportFragmentManager(), "filter dialog");
+        });
+
         delete_btn = findViewById(R.id.delete_ibn);
         delete_btn.setOnClickListener(view -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Are you sure you want to delete " + viewModel.getSelectedList().size() + " items?")
-                    .setPositiveButton("yes", (dialogInterface, i) -> {
-                        final boolean result = viewModel.deleteSelectedNotes();
-                        if(result){
-                            Toast.makeText(NoteListActivity.this, "Successfully deleted!", Toast.LENGTH_SHORT).show();
-                        }else{
-                            Toast.makeText(NoteListActivity.this, "An error occurred!", Toast.LENGTH_SHORT).show();
-                        }
-                        dialogInterface.dismiss();
-                        viewModel.refreshNotes();
-                        setActionMode(false);
-                    })
-                    .setNegativeButton("no", (dialogInterface, i) -> dialogInterface.dismiss());
-            AlertDialog alert = builder.create();
-            if(!viewModel.getSelectedList().isEmpty()){
-                alert.show();
+            int count = viewModel.getSelectedList().size();
+            String msg = "";
+            if(count == 1){
+                msg = "Are you sure you want to delete " + count + " item?";
+            }else{
+                msg = "Are you sure you want to delete " + count + " items?";
             }
+            DeleteDialog dialog = new DeleteDialog(msg);
+            dialog.show(getSupportFragmentManager(), "delete dialog");
         });
     }
 
     ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        viewModel.refreshNotes();
-                        setUpUI();
-                    }
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    reload();
                 }
             });
 
+
+    @Override
+    public void reload() {
+        viewModel.refreshNotes();
+        setUpRecyclerAdapter();
+    }
+
+    @Override
+    public void deleteSelectedNotes() {
+        final boolean result = viewModel.deleteSelectedNotes();
+        if(result){
+            Toast.makeText(NoteListActivity.this, "Successfully deleted!", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(NoteListActivity.this, "An error occurred!", Toast.LENGTH_SHORT).show();
+        }
+        viewModel.refreshNotes();
+        setActionMode(false);
+    }
 }

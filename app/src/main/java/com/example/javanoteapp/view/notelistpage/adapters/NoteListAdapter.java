@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.javanoteapp.R;
 import com.example.javanoteapp.data.models.NoteModel;
+import com.example.javanoteapp.view.notelistpage.adapters.clicklisteners.ItemClickListener;
+import com.example.javanoteapp.view.notelistpage.adapters.clicklisteners.ItemLongClickListener;
 
 import java.util.ArrayList;
 
@@ -57,7 +59,7 @@ public class NoteListAdapter
     @Override
     public NoteListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView;
-        itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.note_list_model, parent, false);
+        itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.model_note_list, parent, false);
         return new ViewHolder(itemView);
     }
 

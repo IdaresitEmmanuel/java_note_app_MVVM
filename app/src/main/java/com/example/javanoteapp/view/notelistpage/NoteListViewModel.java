@@ -9,14 +9,33 @@ import java.util.ArrayList;
 
 public class NoteListViewModel extends ViewModel {
     ArrayList<NoteModel> noteList = new ArrayList<>();
+    ArrayList<NoteModel> noteListFiltered = new ArrayList<>();
     boolean isActionMode = false;
 
     public NoteListViewModel(){
-        refreshNotes();
+        refreshAllNotes();
+
     }
 
     public void refreshNotes(){
         noteList = DBProvider.getInstance().getNotes();
+        for(int i = 0; i < noteListFiltered.size(); i++){
+            boolean shouldDelete = true;
+            for(NoteModel model : noteList){
+                if (model.getId() == noteListFiltered.get(i).getId()) {
+                    shouldDelete = false;
+                    break;
+                }
+            }
+            if(shouldDelete){
+                noteListFiltered.remove(noteListFiltered.get(i));
+            }
+        }
+    }
+
+    public void refreshAllNotes(){
+        noteList = DBProvider.getInstance().getNotes();
+        noteListFiltered.addAll(noteList);
     }
 
     public void setIsActionMode(boolean value){
@@ -41,5 +60,19 @@ public class NoteListViewModel extends ViewModel {
             isDeleteSuccessful = DBProvider.getInstance().deleteNote(selectedList.get(i).getId());
         }
         return isDeleteSuccessful;
+    }
+
+    // Filter
+    public void filterList(String query){
+        noteListFiltered.clear();
+        if(query.isEmpty()){
+            noteListFiltered.addAll(noteList);
+        }else{
+            for(NoteModel note: noteList){
+                if(note.getTitle().toLowerCase().contains(query.toLowerCase())){
+                    noteListFiltered.add(note);
+                }
+            }
+        }
     }
 }

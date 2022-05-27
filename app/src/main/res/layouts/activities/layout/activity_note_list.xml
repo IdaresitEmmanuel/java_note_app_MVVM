@@ -34,7 +34,9 @@
                 android:layout_height="wrap_content"
                 android:text="@string/note_list_page_title"
                 android:layout_marginStart="@dimen/page_margin"
-                android:textSize="20sp" />
+                android:textSize="24sp"
+                android:textStyle="bold"
+                />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -71,7 +73,8 @@
             android:layout_margin="@dimen/page_margin"
             android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatEditText
+            <EditText
+                android:id="@+id/search_et"
                 android:drawableStart="@drawable/ic_search"
                 android:drawablePadding="10dp"
                 android:layout_width="match_parent"
@@ -80,7 +83,9 @@
                 android:padding="@dimen/padding_default"
                 android:textColorHint="@color/icon_color"
                 android:hint="@string/search_hint"
-                android:background="@drawable/bg_search" />
+                android:background="@drawable/bg_search"
+                android:autofillHints=""
+                android:inputType="text" />
 
             <ImageButton
                 android:id="@+id/filter_button"

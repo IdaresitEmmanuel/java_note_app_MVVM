@@ -1,5 +1,6 @@
 package com.example.javanoteapp.view.notelistpage.adapters;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +18,11 @@ import com.example.javanoteapp.view.notelistpage.adapters.clicklisteners.ItemLon
 import java.util.ArrayList;
 
 public class NoteListAdapter
-        extends RecyclerView.Adapter<NoteListAdapter.ViewHolder> {
-    public ArrayList<NoteModel> noteList;
+        extends RecyclerView.Adapter<NoteListAdapter.ViewHolder>{
+    public final ArrayList<NoteModel> noteList;
     ItemClickListener clickListener;
     ItemLongClickListener longClickListener;
-    private boolean isActionMode = false;
+    private boolean isActionMode;
     public NoteListAdapter(boolean isActionMode, ArrayList<NoteModel> noteList, ItemClickListener clickListener, ItemLongClickListener longClickListener){
         this.isActionMode = isActionMode;
         this.noteList = noteList;
@@ -29,10 +30,22 @@ public class NoteListAdapter
         this.longClickListener = longClickListener;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public void setActionMode(boolean actionMode){
+        this.isActionMode = actionMode;
+        refreshList();
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void refreshList(){
+        synchronized (this){
+            notifyDataSetChanged();
+        }
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         private final TextView noteTitle;
-        private TextView noteDate;
-        private TextView noteBody;
+        private final TextView noteDate;
+        private final TextView noteBody;
         private final CheckBox checkBox;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -44,8 +57,8 @@ public class NoteListAdapter
     }
 
     public void selectNote(int position){
-        NoteModel model = noteList.get(position);
-        model.setIsSelected(!model.getIsSelected());
+        noteList.get(position)
+                .setIsSelected(!noteList.get(position).getIsSelected());
         notifyItemChanged(position);
     }
 
@@ -75,10 +88,8 @@ public class NoteListAdapter
             holder.checkBox.setVisibility(View.GONE);
         }
         holder.checkBox.setChecked(model.getIsSelected());
-        holder.checkBox.setOnClickListener(view -> selectNote(position));
-        holder.itemView.setOnClickListener(view -> {
-            clickListener.itemClick(model, position);
-        });
+        holder.checkBox.setClickable(false);
+        holder.itemView.setOnClickListener(view -> clickListener.itemClick(model, position));
 
         holder.itemView.setOnLongClickListener(view -> {
             longClickListener.onItemLongClick(view, model, position);

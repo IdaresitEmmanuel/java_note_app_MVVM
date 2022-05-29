@@ -1,6 +1,5 @@
 package com.example.javanoteapp.view.editnotepage;
 
-import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
@@ -18,10 +17,6 @@ public class EditNoteViewModel extends ViewModel {
     public void setNote(NoteModel model){
         note = model;
     }
-
-//    public NoteModel getNote(){
-//        return note;
-//    }
 
     public int getId(){
         return note.getId();
@@ -48,7 +43,7 @@ public class EditNoteViewModel extends ViewModel {
     }
 
     String saveNote(){
-        String tempString = "";
+        String tempString;
         if(note.getId() > -1){
             final boolean result = DBProvider.getInstance().updateNote(note);
             if(result){

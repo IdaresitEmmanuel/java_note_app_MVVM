@@ -49,7 +49,6 @@ public class NoteListViewModel extends ViewModel {
                 tempList.add(noteList.get(i));
             }
         }
-
         return tempList;
     }
 
@@ -67,11 +66,11 @@ public class NoteListViewModel extends ViewModel {
         noteListFiltered.clear();
         if(query.isEmpty()){
             noteListFiltered.addAll(noteList);
-        }else{
-            for(NoteModel note: noteList){
-                if(note.getTitle().toLowerCase().contains(query.toLowerCase())){
-                    noteListFiltered.add(note);
-                }
+            return;
+        }
+        for(NoteModel note: noteList){
+            if(note.getTitle().toLowerCase().contains(query.toLowerCase())){
+                noteListFiltered.add(note);
             }
         }
     }

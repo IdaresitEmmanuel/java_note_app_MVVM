@@ -50,10 +50,6 @@ public class NoteModel {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
-    }
-
     public boolean getIsSelected() {
         return isSelected;
     }

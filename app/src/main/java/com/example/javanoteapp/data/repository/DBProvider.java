@@ -4,7 +4,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.example.javanoteapp.MyApplication;
 import com.example.javanoteapp.constants.NoteFilter;
@@ -12,6 +15,7 @@ import com.example.javanoteapp.data.models.NoteModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class DBProvider extends SQLiteOpenHelper {
 
@@ -67,39 +71,12 @@ public class DBProvider extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-//    public NoteModel getNote(int noteId){
-//        openDatabase();
-//        NoteModel noteModel = null;
-//        Cursor cur = null;
-//        db.beginTransaction();
-//        try{
-//            cur = db.query(NOTE_TABLE, null, "where " + NOTE_ID + " = ?", new String[]{""+noteId+""}, null, null, null);
-//            if(cur != null){
-//                if(cur.moveToFirst()){
-//                        int id = cur.getInt(cur.getColumnIndexOrThrow(NOTE_ID));
-//                        String title = cur.getString(cur.getColumnIndexOrThrow(NOTE_TITLE));
-//                        String date = cur.getString(cur.getColumnIndexOrThrow(NOTE_DATE));
-//                        String body = cur.getString(cur.getColumnIndexOrThrow(NOTE_BODY));
-//                        noteModel = new NoteModel(id,title, body, date);
-//                }
-//            }
-//
-//        }catch (Exception e){
-//            Log.e("error getting notes", e.toString());
-//        }finally {
-//            assert cur != null;
-//            cur.close();
-//            db.endTransaction();
-//            closeDatabase();
-//        }
-//        return noteModel;
-//    }
-
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public ArrayList<NoteModel> getNotes(){
         openDatabase();
         ArrayList<NoteModel> noteModelList = new ArrayList<>();
         NoteFilter filter = AppPreferences.getInstance().getFilter();
-        String orderString = "";
+        String orderString;
         Cursor cur = null;
         db.beginTransaction();
         if(filter.equals(NoteFilter.byDate)){
@@ -129,9 +106,7 @@ public class DBProvider extends SQLiteOpenHelper {
             cur.close();
         }
         if(filter.equals(NoteFilter.alphabetical)){
-            Collections.sort(noteModelList, (noteModel, t1) -> {
-                return noteModel.getTitle().toLowerCase().compareTo(t1.getTitle().toLowerCase());
-            });
+            Collections.sort(noteModelList, Comparator.comparing(noteModel -> noteModel.getTitle().toLowerCase()));
         }
         return noteModelList;
     }
@@ -187,11 +162,4 @@ public class DBProvider extends SQLiteOpenHelper {
         closeDatabase();
         return result > -1;
     }
-
-//    public boolean deleteAllNotes(){
-//        openDatabase();
-//        int result = db.delete(NOTE_TABLE, null, null);
-//        closeDatabase();
-//        return result > -1;
-//    }
 }

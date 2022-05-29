@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.javanoteapp.R;
 import com.example.javanoteapp.data.models.NoteModel;
+import com.example.javanoteapp.view.notelistpage.NoteListActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class EditNoteActivity extends AppCompatActivity implements LifecycleOwner {
@@ -67,9 +68,9 @@ public class EditNoteActivity extends AppCompatActivity implements LifecycleOwne
 
         save_image_btn.setOnClickListener(view -> {
             View v = getCurrentFocus();
-            if(v instanceof EditText || v instanceof TextInputEditText){
+            if(v instanceof EditText){
                 v.clearFocus();
-                InputMethodManager imm = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
             String result = viewModel.saveNote();
@@ -80,15 +81,12 @@ public class EditNoteActivity extends AppCompatActivity implements LifecycleOwne
             }
         });
 
-        titleEt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                if(b){
-                    options_btn.setVisibility(View.GONE);
-                    save_image_btn.setVisibility(View.VISIBLE);
-                }
-
+        titleEt.setOnFocusChangeListener((view, b) -> {
+            if(b){
+                options_btn.setVisibility(View.GONE);
+                save_image_btn.setVisibility(View.VISIBLE);
             }
+
         });
         bodyTet.setOnFocusChangeListener((view, b) -> {
             if(b){
@@ -108,7 +106,12 @@ public class EditNoteActivity extends AppCompatActivity implements LifecycleOwne
         popup.inflate(R.menu.edit_note_menu);
         popup.setOnMenuItemClickListener(menuItem -> {
             if(menuItem.getItemId() == R.id.delete_note){
-                viewModel.deleteFromDatabase();
+                boolean result = viewModel.deleteFromDatabase();
+                if(result){
+                    Toast.makeText(EditNoteActivity.this, "Successfully deleted!", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(EditNoteActivity.this, "An error occurred!", Toast.LENGTH_SHORT).show();
+                }
 
                 onBackPressed();
             }
